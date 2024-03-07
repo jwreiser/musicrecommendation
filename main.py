@@ -1,5 +1,5 @@
 import generateRecommendations as grec
-import simple_me as sm
+
 # This is a sample Python script.
 
 # Press Shift+F10 to execute it or replace it with your code.
@@ -8,7 +8,6 @@ import simple_me as sm
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    #sm.main()
-    grec.analyze_playlist("67t9aE3VRZZH5eIiYPVToA")
+    grec.generate_recommendations()
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
