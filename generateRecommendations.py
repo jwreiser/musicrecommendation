@@ -188,6 +188,7 @@ def dislike_song(sp):
     play_next_song(sp, result)
 
 def load_more_songs(sp, shouldUpdateDisplay=True):
+    print('CALLING::::::::::::::::::: get_next_songs')
     songs = get_next_songs(sp,playlist_df, result=None, temporary=False)
     if len(songs) > 0:
         sp.start_playback(uris=songs)

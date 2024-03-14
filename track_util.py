@@ -26,7 +26,9 @@ def get_artists(sp,include_disliked=True,include_liked=True):
         artist_df=pd.concat([disliked_artist_df,artist_df])
 
     if artist_df is None:
+        print('CALLING::::::::::::::::::: get_artists_from_playlist')
         artist_df=get_artists_from_playlist(sp,conn,playlist_id)
+        print('CALLED::::::::::::::::::: get_artists_from_playlist')
 
     conn.close()
     return artist_df;
@@ -52,8 +54,9 @@ def table_exists(conn,table_name):
 
 def get_artists_from_playlist(sp,conn,playlist_id):
     artists=[]
-
+    print('CALLING::::::::::::::::::: get_tracks_from_playlist')
     tracks = get_tracks_from_playlist(sp, playlist_id)
+    print('CALLED::::::::::::::::::: get_tracks_from_playlist')
 
     for track in tracks:
         # Get metadata
@@ -69,10 +72,7 @@ def get_artists_from_playlist(sp,conn,playlist_id):
     return artists_df
 
 def get_tracks_from_playlist(sp,playlist_id):
-    print('getting playlist')
-    # Loop through every track in the playlist, extract features and append the features to the playlist df
     playlist = sp.playlist(playlist_id)['tracks']
-    print('got playlist')
     tracks = playlist['items']
     numItems = 0
     try:
@@ -218,8 +218,11 @@ def build_songs_df(result,temporary):
     return songs_df;
 
 def get_next_songs(sp,playlist_df,result,temporary=False):
+    print('CALLING::::::::::::::::::: get_next_songs')
     tracks=filter_playlist_tracks_by_artist(sp,playlist_df)
+    print('CALLING::::::::::::::::::: build_songs_df')
     songs_preferences_df = build_songs_df(result,temporary)
+    print('CALLED::::::::::::::::::: build_songs_df')
     filtered_tracks=[song for song in tracks if song not in list(songs_preferences_df['song'])]
     songs=[]
 
@@ -228,7 +231,9 @@ def get_next_songs(sp,playlist_df,result,temporary=False):
     return songs
 
 def filter_playlist_tracks_by_artist(sp,playlist_df):
+    print('CALLING::::::::::::::::::: get_artists')
     artists_df = get_artists(sp,include_disliked=False)
+    print('CALLED::::::::::::::::::: get_artists')
     artists_playlist_df = playlist_df.merge(artists_df)
 
 #    merged=pd.merge(artists_playlist_df, disliked_artists_df, how='outer', indicator=True)
