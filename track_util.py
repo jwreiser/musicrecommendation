@@ -37,7 +37,7 @@ def get_artists(sp,include_disliked=True,include_liked=True):
         print('POST CALL artist_df size' + str(len(artist_df)))
 
     conn.close()
-    print('CALLED::::::::::::::::::: get_artists_from_playlist CONNNECTION CLOSED')
+    print('CALLED::::::::::::::::::: get_artists_from_playlist CONNECTION CLOSED')
     return artist_df
 
 def add_to_artists(result,table_name):
@@ -242,16 +242,21 @@ def filter_playlist_tracks_by_artist(sp,playlist_df):
     artists_df = get_artists(sp,include_disliked=False)
     print('CALLED::::::::::::::::::: get_artists')
     artists_playlist_df = playlist_df.merge(artists_df)
-
+    print('artists_playlist_df size'+str(len(artists_playlist_df)))
 #    merged=pd.merge(artists_playlist_df, disliked_artists_df, how='outer', indicator=True)
  #   liked_only_df=merged[merged['_merge'] == 'left_only']
 
     merged_series = artists_playlist_df.value_counts('pid', sort=True)
-
+    print('merged_series size' + str(len(merged_series)))
     tracks = []
+    itemcount=0
     for pid, count in merged_series.items():
+        itemcount+=1
         if count > MIN_MATCHING_ARTISTS:
             tracks += playlist_to_tracks(sp,playlist_df, pid, artists_df)
+        if itemcount%100==0:
+            print('CALLED playlist_to_tracks '+itemcount+' times')
+    print('tracks size' + str(len(tracks)))
     return tracks
 def playlist_to_tracks(sp,playlist_df,pid,artists_df):
     current_playlist=playlist_df.loc[playlist_df['pid'] == pid]
