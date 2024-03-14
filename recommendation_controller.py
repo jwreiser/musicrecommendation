@@ -11,6 +11,7 @@ scope = "user-read-playback-state,user-modify-playback-state,user-library-modify
 # Routes
 @app.route("/")
 def index():
+    print('INSIDE!!!!!!!!!!!!!!!!!!!!!! ROOT')
     auth = SpotifyOAuth(cache_path=".spotifycache", scope="user-library-read")
     token_info = auth.get_cached_token()
     if not token_info:
@@ -29,6 +30,7 @@ def index():
 
 @app.route("/load/songs")
 def load():
+    print('INSIDE!!!!!!!!!!!!!!!!!!!!!! LOAD SONGS')
     auth = SpotifyOAuth(username="savecuomo", cache_path=".spotifycache", scope="user-library-read")
     token_info = auth.get_cached_token()
     if not token_info:
@@ -44,6 +46,7 @@ def load():
     return f"You now have an access token : {token}"
 @app.route("/callback")
 def callback():
+    print('INSIDE!!!!!!!!!!!!!!!!!!!!!! CALLBACK')
     url = request.url
     auth = SpotifyOAuth(cache_path=".spotifycache", scope="user-library-read")
     code = auth.parse_response_code(url)

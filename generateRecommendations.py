@@ -1,5 +1,5 @@
-import keyboard,random, requests, urllib3, spotipy,traceback
-import time
+import keyboard,requests, urllib3, spotipy
+import time,random,traceback
 import pandas as pd
 from spotipy.oauth2 import SpotifyOAuth
 import tkinter as tk
