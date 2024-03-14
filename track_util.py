@@ -15,10 +15,12 @@ def get_artists(sp,include_disliked=True,include_liked=True):
     artist_df = None
 
     if include_liked and table_exists(conn, 'artists'):
+        print('ARTISTS table exists')
         query = conn.execute(''' SELECT artist_name FROM artists ''')
         artist_df = pd.DataFrame.from_records(query.fetchall(), columns=['artist_name'])
 
     if include_disliked and table_exists(conn, 'disliked_artists'):
+        print('DISLIKED ARTISTS table exists')
         query = conn.execute(''' SELECT artist_name FROM disliked_artists ''')
         disliked_artist_df = pd.DataFrame.from_records(query.fetchall(), columns=['artist_name'])
         artist_df=pd.concat([disliked_artist_df,artist_df])
@@ -51,7 +53,7 @@ def table_exists(conn,table_name):
 def get_artists_from_playlist(sp,conn,playlist_id):
     artists=[]
 
-    tracks = get_tracks_from_playlist(sp.sp, playlist_id)
+    tracks = get_tracks_from_playlist(sp, playlist_id)
 
     for track in tracks:
         # Get metadata

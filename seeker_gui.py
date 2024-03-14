@@ -1,7 +1,10 @@
 import tkinter as tk
 import tkinter.ttk as ttk
+from generateRecommendations import refresh_track_information,like_song,like_artist,dislike_song,dislike_artist,like_album,load_album,load_audio_features,load_more_songs,load_based_on_songs,load_based_on_artists,load_recent_comedy,load_random_similar_playlist,previous,play,skip_song,pause,add_artist_songs
 
-def create_gui(sp):
+window = tk.Tk()  # create parent window
+
+def create_gui(sp,displayVar):
     displayLab = ttk.Label(window, textvariable=displayVar)
 
     displayLab.grid(row=0, column=0, columnspan=4)
