@@ -16,8 +16,13 @@ def get_artists(sp,include_disliked=True,include_liked=True):
 
     if include_liked and table_exists(conn, 'artists'):
         print('ARTISTS table exists')
-        query = conn.execute(''' SELECT artist_name FROM artists ''')
-        artist_df = pd.DataFrame.from_records(query.fetchall(), columns=['artist_name'])
+        try:
+            query = conn.execute(''' SELECT artist_name FROM artists ''')
+            artist_df = pd.DataFrame.from_records(query.fetchall(), columns=['artist_name'])
+            print('POST QUERY artist_df size'+len(artist_df))
+        except Exception as err:
+            print(Exception, err)
+            print(traceback.format_exc())
 
     if include_disliked and table_exists(conn, 'disliked_artists'):
         print('DISLIKED ARTISTS table exists')
@@ -29,9 +34,11 @@ def get_artists(sp,include_disliked=True,include_liked=True):
         print('CALLING::::::::::::::::::: get_artists_from_playlist')
         artist_df=get_artists_from_playlist(sp,conn,playlist_id)
         print('CALLED::::::::::::::::::: get_artists_from_playlist')
+        print('POST CALL artist_df size' + len(artist_df))
 
     conn.close()
-    return artist_df;
+    print('CALLED::::::::::::::::::: get_artists_from_playlist CONNNECTION CLOSED')
+    return artist_df
 
 def add_to_artists(result,table_name):
     conn = sqlite3.connect(DATABASE_NAME)
@@ -218,7 +225,7 @@ def build_songs_df(result,temporary):
     return songs_df;
 
 def get_next_songs(sp,playlist_df,result,temporary=False):
-    print('CALLING::::::::::::::::::: get_next_songs')
+    print('CALLING::::::::::::::::::: filter_playlist_tracks_by_artist')
     tracks=filter_playlist_tracks_by_artist(sp,playlist_df)
     print('CALLING::::::::::::::::::: build_songs_df')
     songs_preferences_df = build_songs_df(result,temporary)
