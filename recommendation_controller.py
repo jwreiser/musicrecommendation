@@ -1,7 +1,7 @@
 from flask import Flask, request, redirect
 from spotipy.oauth2 import SpotifyOAuth
 
-import spotipy
+import spotipy,traceback
 import generateRecommendations
 
 app = Flask(__name__)
@@ -33,13 +33,18 @@ def load():
     print('INSIDE!!!!!!!!!!!!!!!!!!!!!! LOAD SONGS')
     auth = SpotifyOAuth(username="savecuomo", cache_path=".spotifycache", scope="user-library-read")
     print(f'AUTH {auth}')
-    token_info = auth.get_cached_token()
-    print(f'TOKEN {token_info}')
-    if not token_info:
-        # If there isn't a cached token then you will be redirected to a page where you will be asked to login to spotify
-        # After that procceed to /callback
-        auth_url = auth.get_authorize_url()
-        return redirect(auth_url)
+    try:
+        token_info = auth.get_cached_token()
+        print(f'TOKEN {token_info}')
+        if not token_info:
+            # If there isn't a cached token then you will be redirected to a page where you will be asked to login to spotify
+            # After that procceed to /callback
+            auth_url = auth.get_authorize_url()
+            return redirect(auth_url)
+
+    except Exception as err:
+        print(Exception, err)
+        print(traceback.format_exc())
 
     print('TOKEN2')
     token = token_info['access_token']
