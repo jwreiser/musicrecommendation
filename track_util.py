@@ -19,7 +19,7 @@ def get_artists(sp,include_disliked=True,include_liked=True):
         try:
             query = conn.execute(''' SELECT artist_name FROM artists ''')
             artist_df = pd.DataFrame.from_records(query.fetchall(), columns=['artist_name'])
-            print('POST QUERY artist_df size'+len(artist_df))
+            print('POST QUERY artist_df size'+str(len(artist_df)))
         except Exception as err:
             print(Exception, err)
             print(traceback.format_exc())
@@ -34,7 +34,7 @@ def get_artists(sp,include_disliked=True,include_liked=True):
         print('CALLING::::::::::::::::::: get_artists_from_playlist')
         artist_df=get_artists_from_playlist(sp,conn,playlist_id)
         print('CALLED::::::::::::::::::: get_artists_from_playlist')
-        print('POST CALL artist_df size' + len(artist_df))
+        print('POST CALL artist_df size' + str(len(artist_df)))
 
     conn.close()
     print('CALLED::::::::::::::::::: get_artists_from_playlist CONNNECTION CLOSED')
