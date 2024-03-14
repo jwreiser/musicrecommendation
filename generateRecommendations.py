@@ -1,7 +1,5 @@
 import keyboard,random, requests, urllib3, spotipy,traceback
 import time
-from pynput.keyboard import Key, Listener
-from spotipy.oauth2 import SpotifyClientCredentials
 import pandas as pd
 from spotipy.oauth2 import SpotifyOAuth
 import tkinter as tk
