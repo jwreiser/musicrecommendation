@@ -50,7 +50,7 @@ session.mount('https://', adapter)
 #window = tk.Tk()  # create parent window
 #displayVar = tk.StringVar()
 recently_played=[]
-playlist_df = pd.read_csv('../spotify_million_playlist_dataset/src/1.csv')
+playlist_df = pd.read_csv('biggest_chunk.csv')
 unused_keys=['alt','up arrow','left arrow','down arrow','q','w','e','r','t','f','g','z','c','v','b','1','2','3','4','5','6','7','8','9','0','-','=',
              'y','u','i','o','p','h','j','k','l','[',']','\\',';','\'','n','m',',','/','enter']
 #right arrow, s, a,d,x
