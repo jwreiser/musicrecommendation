@@ -32,6 +32,7 @@ def index():
 def load():
     print('INSIDE!!!!!!!!!!!!!!!!!!!!!! LOAD SONGS')
     auth = SpotifyOAuth(username="savecuomo", cache_path=".spotifycache", scope="user-library-read")
+    print('AUTH')
     token_info = auth.get_cached_token()
     if not token_info:
         # If there isn't a cached token then you will be redirected to a page where you will be asked to login to spotify
@@ -39,10 +40,15 @@ def load():
         auth_url = auth.get_authorize_url()
         return redirect(auth_url)
 
+    print('TOKEN2')
     token = token_info['access_token']
+    print('TOKEN2')
 
     sp = spotipy.Spotify(auth=token,requests_timeout=15)
+    print('SPOTIFY')
+    print(f'!@@@@@@@sp {sp}')
     generateRecommendations.load_more_songs(sp, shouldUpdateDisplay=False)
+    print('BAAAAAAAAAAAAAAAACK')
     return f"You now have an access token : {token}"
 @app.route("/callback")
 def callback():
