@@ -42,7 +42,7 @@ def load():
     token = token_info['access_token']
 
     sp = spotipy.Spotify(auth=token,requests_timeout=15)
-    generateRecommendations.load_more_songs(sp, updateDisplay=False)
+    generateRecommendations.load_more_songs(sp, shouldUpdateDisplay=False)
     return f"You now have an access token : {token}"
 @app.route("/callback")
 def callback():
