@@ -32,8 +32,9 @@ def index():
 def load():
     print('INSIDE!!!!!!!!!!!!!!!!!!!!!! LOAD SONGS')
     auth = SpotifyOAuth(username="savecuomo", cache_path=".spotifycache", scope="user-library-read")
-    print('AUTH')
+    print(f'AUTH {auth}')
     token_info = auth.get_cached_token()
+    print(f'TOKEN {token_info}')
     if not token_info:
         # If there isn't a cached token then you will be redirected to a page where you will be asked to login to spotify
         # After that procceed to /callback
