@@ -344,7 +344,7 @@ def updateDisplay(sp,genre=None):
             display+=": "+genre
         # displayVar.set(display)
 
-window = tk.Tk()  # create parent window
+# window = tk.Tk()  # create parent window
 
 # def create_gui(sp,displayVar):
 #     displayLab = ttk.Label(window, textvariable=displayVar)
