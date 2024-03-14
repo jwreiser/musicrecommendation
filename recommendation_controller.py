@@ -5,14 +5,14 @@ import spotipy,traceback
 import generateRecommendations
 
 app = Flask(__name__)
-scope = "user-read-playback-state,user-modify-playback-state,user-library-modify,user-follow-modify"
+scope = "user-read-playback-state,user-modify-playback-state,user-library-modify,user-follow-modify,user-library-read"
 
 
 # Routes
 @app.route("/")
 def index():
     print('INSIDE!!!!!!!!!!!!!!!!!!!!!! ROOT')
-    auth = SpotifyOAuth(cache_path=".spotifycache", scope="user-library-read")
+    auth = SpotifyOAuth(cache_path=".spotifycache", scope=scope)
     token_info = auth.get_cached_token()
     if not token_info:
         # If there isn't a cached token then you will be redirected to a page where you will be asked to login to spotify
@@ -31,7 +31,9 @@ def index():
 @app.route("/load/songs")
 def load():
     print('INSIDE!!!!!!!!!!!!!!!!!!!!!! LOAD SONGS')
-    auth = SpotifyOAuth(username="savecuomo", cache_path=".spotifycache", scope="user-library-read")
+    client_id='efcbfcfbfa624a9498f42a2a28475264'
+    secret='4249cfd1b2e34183af5b3e2bdd073b99'
+    auth = SpotifyOAuth(username="savecuomo",client_id=client_id,client_secret=secret, cache_path=".spotifycache", scope=scope)
     print(f'AUTH {auth}')
     try:
         token_info = auth.get_cached_token()
@@ -42,25 +44,25 @@ def load():
             auth_url = auth.get_authorize_url()
             return redirect(auth_url)
 
+        print('TOKEN2')
+        token = token_info['access_token']
+        print('TOKEN2')
+
+        sp = spotipy.Spotify(auth=token, requests_timeout=15)
+        print('SPOTIFY')
+        print(f'!@@@@@@@sp {sp}')
+        generateRecommendations.load_more_songs(sp, shouldUpdateDisplay=False)
+        print('BAAAAAAAAAAAAAAAACK')
     except Exception as err:
         print(Exception, err)
         print(traceback.format_exc())
 
-    print('TOKEN2')
-    token = token_info['access_token']
-    print('TOKEN2')
 
-    sp = spotipy.Spotify(auth=token,requests_timeout=15)
-    print('SPOTIFY')
-    print(f'!@@@@@@@sp {sp}')
-    generateRecommendations.load_more_songs(sp, shouldUpdateDisplay=False)
-    print('BAAAAAAAAAAAAAAAACK')
-    return f"You now have an access token : {token}"
 @app.route("/callback")
 def callback():
     print('INSIDE!!!!!!!!!!!!!!!!!!!!!! CALLBACK')
     url = request.url
-    auth = SpotifyOAuth(cache_path=".spotifycache", scope="user-library-read")
+    auth = SpotifyOAuth(cache_path=".spotifycache", scope=scope)
     code = auth.parse_response_code(url)
     token = auth.get_access_token(code)
     # Once the get_access_token function is called, a cache will be created making it possible to go through the route "/" without having to login anymore
