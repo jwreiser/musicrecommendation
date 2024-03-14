@@ -31,11 +31,13 @@ def get_artists(sp,include_disliked=True,include_liked=True):
         artist_df=pd.concat([disliked_artist_df,artist_df])
 
     if artist_df is None:
-        print('CALLING::::::::::::::::::: get_artists_from_playlist')
-        artist_df=get_artists_from_playlist(sp,conn,playlist_id)
-        print('CALLED::::::::::::::::::: get_artists_from_playlist')
-        print('POST CALL artist_df size' + str(len(artist_df)))
-
+        if include_liked:
+            print('CALLING::::::::::::::::::: get_artists_from_playlist')
+            artist_df=get_artists_from_playlist(sp,conn,playlist_id)
+            print('CALLED::::::::::::::::::: get_artists_from_playlist')
+            print('POST CALL artist_df size' + str(len(artist_df)))
+        else:
+            artist_df =pd.DataFrame()
     conn.close()
     print('CALLED::::::::::::::::::: get_artists_from_playlist CONNECTION CLOSED')
     return artist_df
@@ -253,9 +255,11 @@ def filter_playlist_tracks_by_artist(sp,playlist_df):
     for pid, count in merged_series.items():
         itemcount+=1
         if count > MIN_MATCHING_ARTISTS:
+            print('CALLING::::::::::::::::::: playlist_to_tracks')
             tracks += playlist_to_tracks(sp,playlist_df, pid, artists_df)
+            print('CALLED::::::::::::::::::: playlist_to_tracks')
         if itemcount%100==0:
-            print('CALLED playlist_to_tracks '+itemcount+' times')
+            print('CALLED playlist_to_tracks '+str(itemcount)+' times')
     print('tracks size' + str(len(tracks)))
     return tracks
 def playlist_to_tracks(sp,playlist_df,pid,artists_df):
