@@ -198,7 +198,8 @@ def load_more_songs(sp, shouldUpdateDisplay=True):
         sp.start_playback(uris=songs)
     if shouldUpdateDisplay:
         updateDisplay(sp)
-
+    else:
+        return getDisplay(sp)
 def load_based_on_artists(sp, shouldUpdateDisplay=True):
     artists_df = get_artists(sp,include_disliked=False)
     songs_df = build_songs_df(result=None, temporary=False)
@@ -220,7 +221,8 @@ def load_based_on_artists(sp, shouldUpdateDisplay=True):
     sp.start_playback(uris=songs)
     if shouldUpdateDisplay:
         updateDisplay(sp)
-
+    else:
+        return getDisplay(sp)
 def load_based_on_songs(sp,shouldUpdateDisplay=True):
     songs_df=build_songs_df(result=None,temporary=False)
     artists_df=get_artists(sp,include_disliked=True)
@@ -235,7 +237,8 @@ def load_based_on_songs(sp,shouldUpdateDisplay=True):
     sp.start_playback(uris=songs)
     if shouldUpdateDisplay:
         updateDisplay(sp)
-
+    else:
+        return getDisplay(sp)
 def load_recent_comedy(sp,shouldUpdateDisplay=True):
     tracks=sp.search(q="genre:comedy AND year:2020-2024", limit=50, type='track')['tracks']['items']
 
@@ -253,6 +256,8 @@ def load_recent_comedy(sp,shouldUpdateDisplay=True):
 
     if shouldUpdateDisplay:
         updateDisplay(sp)
+    else:
+        return getDisplay(sp)
 def load_random_similar_playlist(sp,shouldUpdateDisplay=True):
     artists_df = get_artists(sp,include_disliked=False)
     query=random.choice(artists_df['artist_name'])
@@ -279,7 +284,8 @@ def load_random_similar_playlist(sp,shouldUpdateDisplay=True):
 
     if shouldUpdateDisplay:
         updateDisplay(sp)
-
+    else:
+        return getDisplay(sp)
 def pause(sp):
     sp.pause_playback()
 
