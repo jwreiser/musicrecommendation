@@ -65,7 +65,7 @@ def basis_features():
 @app.route("/load/songs")
 def load_songs():
     print('INSIDE!!!!!!!!!!!!!!!!!!!!!! LOAD SONGS')
-    generateRecommendations.load_more_songs(get_spotify(), shouldUpdateDisplay=False)
+    return generateRecommendations.load_more_songs(get_spotify(), shouldUpdateDisplay=False)
 
 @app.route("/load/artist")
 def load_artist():
