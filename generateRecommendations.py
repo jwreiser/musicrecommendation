@@ -1,5 +1,5 @@
 import keyboard,requests, urllib3, spotipy
-import time,random,traceback
+import time,random,traceback,json
 import pandas as pd
 from spotipy.oauth2 import SpotifyOAuth
 import logging
@@ -360,11 +360,17 @@ def updateDisplay(sp,genre=None):
 def getDisplay(sp):
     time.sleep(3)
     result = sp.currently_playing()
-    display=None
+    display={}
     if result is not None:
         track = result['item']
-        display=track['artists'][0]['name'] + " - " + track['album']['name'] + '-' + track['name']
-    return display
+        display={
+            'artist':track['artists'][0]['name'],
+            'album':track['album']['name'] ,
+            'track':track['name'],
+            'cover': track['album']['images'][0]['url']
+        }
+
+    return json.dumps(display)
 
 
 # def create_gui(sp,displayVar):
