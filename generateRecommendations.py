@@ -6,11 +6,11 @@ import logging
 import os
 
 import track_util
-# import tkinter as tk
-# import tkinter.ttk as ttk
+import tkinter as tk
+import tkinter.ttk as ttk
 #
-# window = tk.Tk()  # create parent window
-# displayVar = tk.StringVar()
+window = tk.Tk()  # create parent window
+displayVar = tk.StringVar()
 logging.basicConfig(level='DEBUG')
 
 from track_util import get_next_songs,get_artists,build_songs_df,add_to_artists,get_songs_similar_to_artist,get_random_tracks_from_playlist,get_songs_by_audio_attributes,get_audio_attributes_from_playlist
@@ -127,13 +127,13 @@ def generate_recommendations(spotify=None):
 
     keyboard.on_press_key("ctrl", lambda event: handleWindows(event,sp))
     play_next_song(sp, None)
-    # create_gui(sp,displayVar)
+    create_gui(sp,displayVar)
     print('success')
 
-def dislike_artist(sp):
+def dislike_artist(sp,shouldUpdateDisplay=True):
     result = sp.currently_playing()
     add_to_artists(result,'disliked_artists')
-    play_next_song(sp, result)
+    play_next_song(sp, result,shouldUpdateDisplay)
 
 def load_audio_features(sp,shouldUpdateDisplay=True):
     genre,songs=get_songs_by_audio_attributes(sp,playlist_id)
@@ -141,14 +141,17 @@ def load_audio_features(sp,shouldUpdateDisplay=True):
     if shouldUpdateDisplay:
         updateDisplay(sp,genre)
 
-    # get_audio_attributes_from_playlist(sp,playlist_id)
-def add_artist_songs(sp):
+
+def add_artist_songs(sp,shouldUpdateDisplay=True):
     result = sp.currently_playing()
     track = result['item']
     tracks = sp.artist_top_tracks(track['artists'][0]['id'])
     track_util.play_tracks(sp,track,tracks['tracks'])
-    updateDisplay(sp)
-def like_artist(sp):
+    if shouldUpdateDisplay:
+        updateDisplay(sp)
+    else:
+        return getDisplay(sp)
+def like_artist(sp,shouldUpdateDisplay=True):
     result = sp.currently_playing()
     if result is not None:
         add_to_artists(result, 'artists')
@@ -157,16 +160,16 @@ def like_artist(sp):
         sp.user_follow_artists(ids=[id])
         songs=get_songs_similar_to_artist(sp, id, True)
         sp.start_playback(uris=songs)
-        updateDisplay(sp)
-    else:
-        play_next_song(playlist_df,result)
+        if shouldUpdateDisplay:
+            updateDisplay(sp)
 
-def like_album(sp):
+def like_album(sp,shouldUpdateDisplay=True):
     result = sp.currently_playing()
-    track = result['item']
-    sp.current_user_saved_albums_add(albums=[track['album']['id']])
+    if result is not None:
+        track = result['item']
+        sp.current_user_saved_albums_add(albums=[track['album']['id']])
 
-def load_album(sp):
+def load_album(sp,shouldUpdateDisplay=True):
     result = sp.currently_playing()
     if result is not None:
         track = result['item']
@@ -178,14 +181,15 @@ def load_album(sp):
             if current_track not in list(songs_df['song']) and current_track != track['uri']:
                 tracks_list.append(current_track)
         sp.start_playback(uris=tracks_list)
-        updateDisplay(sp)
-def skip_song(sp):
-    play_next_song(sp, result=None,temporary=True)
+        if shouldUpdateDisplay:
+            updateDisplay(sp)
+def skip_song(sp, shouldUpdateDisplay=True):
+    play_next_song(sp, result=None,temporary=True,shouldUpdateDisplay=shouldUpdateDisplay)
 
-def dislike_song(sp):
+def dislike_song(sp, shouldUpdateDisplay=True):
     result = sp.currently_playing()
     build_songs_df(result,temporary=False)
-    play_next_song(sp, result)
+    play_next_song(sp, result,shouldUpdateDisplay)
 
 def load_more_songs(sp, shouldUpdateDisplay=True):
     print('CALLING::::::::::::::::::: get_next_songs')
@@ -217,7 +221,7 @@ def load_based_on_artists(sp, shouldUpdateDisplay=True):
     if shouldUpdateDisplay:
         updateDisplay(sp)
 
-def load_based_on_songs(sp):
+def load_based_on_songs(sp,shouldUpdateDisplay=True):
     songs_df=build_songs_df(result=None,temporary=False)
     artists_df=get_artists(sp,include_disliked=True)
     tracks = get_random_tracks_from_playlist(sp,playlist_id,5)
@@ -227,10 +231,10 @@ def load_based_on_songs(sp):
     for track in recommendations['tracks']:
         if track['uri'] not in list(songs_df['song']):
             if track['artists'][0]['name'] not in list(artists_df['artist_name']):
-
                 songs.append(track['uri'])
     sp.start_playback(uris=songs)
-    updateDisplay(sp)
+    if shouldUpdateDisplay:
+        updateDisplay(sp)
 
 def load_recent_comedy(sp,shouldUpdateDisplay=True):
     tracks=sp.search(q="genre:comedy AND year:2020-2024", limit=50, type='track')['tracks']['items']
@@ -287,7 +291,7 @@ def play(sp):
 def refresh_track_information(sp):
     updateDisplay(sp)
 
-def like_song(sp):
+def like_song(sp, shouldUpdateDisplay=True):
     result = sp.currently_playing()
     if result is not None:
         songs_df=build_songs_df(result=None,temporary=False)  #stop saving these here as wastes space
@@ -302,14 +306,15 @@ def like_song(sp):
                     if track['artists'][0]['name'] not in list(artists_df['artist_name']):
                         songs.append(track['uri'])
             sp.start_playback(uris=songs)
-            updateDisplay(sp)
+            if shouldUpdateDisplay:
+                updateDisplay(sp)
 
         except Exception as err:
             print(Exception, err)
             print(traceback.format_exc())
 
 
-def play_next_song(sp,result,temporary=False):
+def play_next_song(sp,result,temporary=False,shouldUpdateDisplay=True):
     queue = sp.queue()
     play_from_queue=False
     artists_df = get_artists(sp,include_disliked=True)
@@ -330,7 +335,8 @@ def play_next_song(sp,result,temporary=False):
         songs = get_next_songs(sp,playlist_df,result,temporary)
     if len(songs) > 0:
         sp.start_playback(uris=songs)
-    updateDisplay(sp)
+    if shouldUpdateDisplay:
+        updateDisplay(sp)
 
 
 
@@ -345,64 +351,73 @@ def updateDisplay(sp,genre=None):
             display+=": "+genre
         # displayVar.set(display)
 
-# window = tk.Tk()  # create parent window
+def getDisplay(sp):
+    time.sleep(3)
+    result = sp.currently_playing()
+    display=None
+    if result is not None:
+        track = result['item']
+        display=track['artists'][0]['name'] + " - " + track['album']['name'] + '-' + track['name']
+    return display
 
-# def create_gui(sp,displayVar):
-#     displayLab = ttk.Label(window, textvariable=displayVar)
-#
-#     displayLab.grid(row=0, column=0, columnspan=4)
-#     refresh_button = ttk.Button(window, text="REFRESH TRACK INFORMATION", command=lambda: refresh_track_information(sp))
-#     refresh_button.grid(row=1, column=0, columnspan=4)
-#
-#     rownum = 2
-#     like_artist_button = ttk.Button(window, text="LIKE ARTIST", command=lambda: like_artist(sp))
-#     dislike_artist_button = ttk.Button(window, text="DISLIKE ARTIST", command=lambda: dislike_artist(sp))
-#     like_song_button = ttk.Button(window, text="LIKE SONG", command=lambda: like_song(sp))
-#     dislike_song_button = ttk.Button(window, text="DISLIKE SONG", command=lambda: dislike_song(sp))
-#     like_artist_button.grid(row=rownum, column=0, padx=5, pady=5)
-#     dislike_artist_button.grid(row=rownum, column=1, padx=5, pady=5)
-#     like_song_button.grid(row=rownum, column=2, padx=5, pady=5)
-#     dislike_song_button.grid(row=rownum, column=3, padx=5, pady=5)
-#     rownum+=1
-#
-#     like_album_button = ttk.Button(window, text="LIKE ALBUM", command=lambda: like_album(sp))
-#     like_album_button.grid(row=rownum, column=0, padx=5, pady=5)
-#     load_album_button = ttk.Button(window, text="LOAD ALBUM", command=lambda: load_album(sp))
-#     load_album_button.grid(row=rownum, column=1, padx=5, pady=5, columnspan=1)
-#     add_artist_songs_button = ttk.Button(window, text="LOAD ARTIST", command=lambda: add_artist_songs(sp))
-#     add_artist_songs_button.grid(row=rownum, column=2, padx=5, pady=5)
-#     load_button = ttk.Button(window, text="MORE SONGS", command=lambda: load_more_songs(sp))
-#     load_button.grid(row=rownum, column=3, padx=5, pady=5, columnspan=1)
-#     rownum += 1
-#
-#
-#     load_random_artist_button = ttk.Button(window, text="BASIS: ARTISTS", command=lambda: load_based_on_artists(sp))
-#     load_random_artist_button.grid(row=rownum, column=0, padx=5, pady=5)
-#     load_based_songs_button = ttk.Button(window, text="BASIS: SONGS", command=lambda: load_based_on_songs(sp))
-#     load_based_songs_button.grid(row=rownum, column=1, padx=5, pady=5)
-#     audio_features_button = ttk.Button(window, text="BASIC: AUDIO FEATURES", command=lambda: load_audio_features(sp))
-#     audio_features_button.grid(row=rownum, column=2, padx=5, pady=5)
-#     load_random_playlist_button = ttk.Button(window, text="LOAD PLAYLIST",command=lambda: load_random_similar_playlist(sp))
-#     load_random_playlist_button.grid(row=rownum, column=3, padx=5, pady=5)
-#     rownum += 1
-#
-#     load_recent_comedy_button = ttk.Button(window, text="RECENT COMEDY", command=lambda: load_recent_comedy(sp))
-#     load_recent_comedy_button.grid(row=rownum, column=0, padx=5, pady=5, columnspan=4)
-#     rownum += 1
-#
-#
-#     prev_button = ttk.Button(window, text="PREV", command=lambda: previous(sp))
-#     pause_button = ttk.Button(window, text="PAUSE", command=lambda: pause(sp))
-#     play_button = ttk.Button(window, text="PLAY", command=lambda: play(sp))
-#     skip_song_button = ttk.Button(window, text="NEXT", command=lambda: skip_song(sp))
-#     prev_button.grid(row=rownum, column=0, padx=5, pady=5)
-#     pause_button.grid(row=rownum, column=1, padx=5, pady=5)
-#     play_button.grid(row=rownum, column=2, padx=5, pady=5)
-#     skip_song_button.grid(row=rownum, column=3, padx=5, pady=5)
-#     rownum += 1
-#
-#
-#     window.mainloop()
+
+def create_gui(sp,displayVar):
+    displayLab = ttk.Label(window, textvariable=displayVar)
+
+    displayLab.grid(row=0, column=0, columnspan=4)
+    refresh_button = ttk.Button(window, text="REFRESH TRACK INFORMATION", command=lambda: refresh_track_information(sp))
+    refresh_button.grid(row=1, column=0, columnspan=4)
+    #
+    rownum = 2
+    like_artist_button = ttk.Button(window, text="LIKE ARTIST", command=lambda: like_artist(sp))
+    dislike_artist_button = ttk.Button(window, text="DISLIKE ARTIST", command=lambda: dislike_artist(sp))
+    like_song_button = ttk.Button(window, text="LIKE SONG", command=lambda: like_song(sp))
+    dislike_song_button = ttk.Button(window, text="DISLIKE SONG", command=lambda: dislike_song(sp))
+    like_artist_button.grid(row=rownum, column=0, padx=5, pady=5)
+    dislike_artist_button.grid(row=rownum, column=1, padx=5, pady=5)
+    like_song_button.grid(row=rownum, column=2, padx=5, pady=5)
+    dislike_song_button.grid(row=rownum, column=3, padx=5, pady=5)
+    rownum+=1
+    #
+    like_album_button = ttk.Button(window, text="LIKE ALBUM", command=lambda: like_album(sp))
+    like_album_button.grid(row=rownum, column=0, padx=5, pady=5)
+    load_album_button = ttk.Button(window, text="LOAD ALBUM", command=lambda: load_album(sp))
+    load_album_button.grid(row=rownum, column=1, padx=5, pady=5, columnspan=1)
+    add_artist_songs_button = ttk.Button(window, text="LOAD ARTIST", command=lambda: add_artist_songs(sp))
+    add_artist_songs_button.grid(row=rownum, column=2, padx=5, pady=5)
+    load_button = ttk.Button(window, text="MORE SONGS", command=lambda: load_more_songs(sp))
+    load_button.grid(row=rownum, column=3, padx=5, pady=5, columnspan=1)
+    rownum += 1
+    #
+    #
+    load_random_artist_button = ttk.Button(window, text="BASIS: ARTISTS", command=lambda: load_based_on_artists(sp))
+    load_random_artist_button.grid(row=rownum, column=0, padx=5, pady=5)
+    load_based_songs_button = ttk.Button(window, text="BASIS: SONGS", command=lambda: load_based_on_songs(sp))
+    load_based_songs_button.grid(row=rownum, column=1, padx=5, pady=5)
+    audio_features_button = ttk.Button(window, text="BASIC: AUDIO FEATURES", command=lambda: load_audio_features(sp))
+    audio_features_button.grid(row=rownum, column=2, padx=5, pady=5)
+    load_random_playlist_button = ttk.Button(window, text="LOAD PLAYLIST",command=lambda: load_random_similar_playlist(sp))
+    load_random_playlist_button.grid(row=rownum, column=3, padx=5, pady=5)
+    rownum += 1
+    #
+    load_recent_comedy_button = ttk.Button(window, text="RECENT COMEDY", command=lambda: load_recent_comedy(sp))
+    load_recent_comedy_button.grid(row=rownum, column=0, padx=5, pady=5, columnspan=4)
+    rownum += 1
+    #
+    #
+    prev_button = ttk.Button(window, text="PREV", command=lambda: previous(sp))
+    pause_button = ttk.Button(window, text="PAUSE", command=lambda: pause(sp))
+    play_button = ttk.Button(window, text="PLAY", command=lambda: play(sp))
+    skip_song_button = ttk.Button(window, text="NEXT", command=lambda: skip_song(sp))
+    prev_button.grid(row=rownum, column=0, padx=5, pady=5)
+    pause_button.grid(row=rownum, column=1, padx=5, pady=5)
+    play_button.grid(row=rownum, column=2, padx=5, pady=5)
+    skip_song_button.grid(row=rownum, column=3, padx=5, pady=5)
+    rownum += 1
+
+
+    window.mainloop()
+
 if __name__ == '__main__':
     generate_recommendations()
 
