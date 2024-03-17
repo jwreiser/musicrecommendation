@@ -134,13 +134,15 @@ def dislike_artist(sp,shouldUpdateDisplay=True):
     result = sp.currently_playing()
     add_to_artists(result,'disliked_artists')
     play_next_song(sp, result,shouldUpdateDisplay)
-
+    if not shouldUpdateDisplay:
+        return getDisplay(sp)
 def load_audio_features(sp,shouldUpdateDisplay=True):
     genre,songs=get_songs_by_audio_attributes(sp,playlist_id)
     sp.start_playback(uris=songs)
     if shouldUpdateDisplay:
         updateDisplay(sp,genre)
-
+    else:
+        return getDisplay(sp)
 
 def add_artist_songs(sp,shouldUpdateDisplay=True):
     result = sp.currently_playing()
@@ -162,7 +164,8 @@ def like_artist(sp,shouldUpdateDisplay=True):
         sp.start_playback(uris=songs)
         if shouldUpdateDisplay:
             updateDisplay(sp)
-
+        else:
+            return getDisplay(sp)
 def like_album(sp,shouldUpdateDisplay=True):
     result = sp.currently_playing()
     if result is not None:
@@ -183,13 +186,19 @@ def load_album(sp,shouldUpdateDisplay=True):
         sp.start_playback(uris=tracks_list)
         if shouldUpdateDisplay:
             updateDisplay(sp)
+        else:
+            return getDisplay(sp)
 def skip_song(sp, shouldUpdateDisplay=True):
     play_next_song(sp, result=None,temporary=True,shouldUpdateDisplay=shouldUpdateDisplay)
+    if not shouldUpdateDisplay:
+        return getDisplay(sp)
 
 def dislike_song(sp, shouldUpdateDisplay=True):
     result = sp.currently_playing()
     build_songs_df(result,temporary=False)
     play_next_song(sp, result,shouldUpdateDisplay)
+    if not shouldUpdateDisplay:
+        return getDisplay(sp)
 
 def load_more_songs(sp, shouldUpdateDisplay=True):
     print('CALLING::::::::::::::::::: get_next_songs')
@@ -289,8 +298,12 @@ def load_random_similar_playlist(sp,shouldUpdateDisplay=True):
 def pause(sp):
     sp.pause_playback()
 
-def previous(sp):
+def previous(sp,shouldUpdateDisplay=True):
     sp.previous_track()
+    if not shouldUpdateDisplay:
+        return getDisplay(sp)
+
+
 def play(sp):
     sp.start_playback()
 
@@ -314,7 +327,8 @@ def like_song(sp, shouldUpdateDisplay=True):
             sp.start_playback(uris=songs)
             if shouldUpdateDisplay:
                 updateDisplay(sp)
-
+            else:
+                return getDisplay(sp)
         except Exception as err:
             print(Exception, err)
             print(traceback.format_exc())

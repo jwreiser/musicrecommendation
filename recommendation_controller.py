@@ -28,40 +28,66 @@ def index():
     generateRecommendations.generate_recommendations(sp)
     return f"You now have an access token : {token}"
 
+######################              LIKE/DISLIKE        ###################################
+@app.route("/artist/like")
+def like_artist():
+    print('INSIDE!!!!!!!!!!!!!!!!!!!!!! LIKE ARTIST')
+    return generateRecommendations.like_artist(get_spotify(), shouldUpdateDisplay=False)
+
+@app.route("/artist/dislike")
+def dislike_artist():
+    print('INSIDE!!!!!!!!!!!!!!!!!!!!!! DISLIKE ARTIST')
+    return generateRecommendations.dislike_artist(get_spotify(), shouldUpdateDisplay=False)
+
+@app.route("/album/like")
+def like_album():
+    print('INSIDE!!!!!!!!!!!!!!!!!!!!!! LIKE album')
+    generateRecommendations.like_album(get_spotify(), shouldUpdateDisplay=False)
+@app.route("/song/like")
+def like_song():
+    print('INSIDE!!!!!!!!!!!!!!!!!!!!!! LIKE song')
+    return generateRecommendations.like_song(get_spotify(), shouldUpdateDisplay=False)
+@app.route("/song/dislike")
+def dislike_song():
+    print('INSIDE!!!!!!!!!!!!!!!!!!!!!! disLIKE song')
+    return generateRecommendations.dislike_song(get_spotify(), shouldUpdateDisplay=False)
+
+
+######################              PLAYER        ###################################
 @app.route("/player/previous")
 def previous():
     print('INSIDE!!!!!!!!!!!!!!!!!!!!!! previous')
-    generateRecommendations.previous(get_spotify())
+    return generateRecommendations.previous(get_spotify(), shouldUpdateDisplay=False)
 
 @app.route("/player/pause")
 def pause():
     print('INSIDE!!!!!!!!!!!!!!!!!!!!!! pause')
-    generateRecommendations.pause(get_spotify())
+    return generateRecommendations.pause(get_spotify())
 
 @app.route("/player/play")
 def play():
     print('INSIDE!!!!!!!!!!!!!!!!!!!!!! play')
-    generateRecommendations.play(get_spotify())
+    return generateRecommendations.play(get_spotify())
 @app.route("/player/next")
 def skip():
     print('INSIDE!!!!!!!!!!!!!!!!!!!!!! next')
-    generateRecommendations.skip_song(get_spotify())
-
+    return generateRecommendations.skip_song(get_spotify())
+######################              BASIS        ###################################
 @app.route("/basis/artists")
 def basis_artists():
     print('INSIDE!!!!!!!!!!!!!!!!!!!!!! basis artists')
-    generateRecommendations.load_based_on_artists(get_spotify(), shouldUpdateDisplay=False)
+    return generateRecommendations.load_based_on_artists(get_spotify(), shouldUpdateDisplay=False)
 
 @app.route("/basis/songs")
 def basis_songs():
     print('INSIDE!!!!!!!!!!!!!!!!!!!!!! basis songs')
-    generateRecommendations.load_based_on_songs(get_spotify(), shouldUpdateDisplay=False)
+    return generateRecommendations.load_based_on_songs(get_spotify(), shouldUpdateDisplay=False)
 
 @app.route("/basis/features")
 def basis_features():
     print('INSIDE!!!!!!!!!!!!!!!!!!!!!! basis features')
-    generateRecommendations.load_audio_features(get_spotify(), shouldUpdateDisplay=False)
-
+    return generateRecommendations.load_audio_features(get_spotify(), shouldUpdateDisplay=False)
+######################              LOAD        ###################################
 @app.route("/load/songs")
 def load_songs():
     print('INSIDE!!!!!!!!!!!!!!!!!!!!!! LOAD SONGS')
@@ -75,39 +101,17 @@ def load_artist():
 @app.route("/load/album")
 def load_album():
     print('INSIDE!!!!!!!!!!!!!!!!!!!!!! LOAD album')
-    generateRecommendations.load_album(get_spotify(), shouldUpdateDisplay=False)
+    return generateRecommendations.load_album(get_spotify(), shouldUpdateDisplay=False)
 
 @app.route("/load/playlist")
 def load_playlist():
     print('INSIDE!!!!!!!!!!!!!!!!!!!!!! LOAD playlist')
-    generateRecommendations.load_random_similar_playlist(get_spotify(), shouldUpdateDisplay=False)
+    return generateRecommendations.load_random_similar_playlist(get_spotify(), shouldUpdateDisplay=False)
 @app.route("/load/comedy")
 def load_comedy():
     print('INSIDE!!!!!!!!!!!!!!!!!!!!!! LOAD comedy')
-    generateRecommendations.load_recent_comedy(get_spotify(), shouldUpdateDisplay=False)
+    return generateRecommendations.load_recent_comedy(get_spotify(), shouldUpdateDisplay=False)
 
-@app.route("/artist/like")
-def like_artist():
-    print('INSIDE!!!!!!!!!!!!!!!!!!!!!! LIKE ARTIST')
-    generateRecommendations.like_artist(get_spotify(), shouldUpdateDisplay=False)
-
-@app.route("/album/like")
-def like_album():
-    print('INSIDE!!!!!!!!!!!!!!!!!!!!!! LIKE album')
-    generateRecommendations.like_album(get_spotify(), shouldUpdateDisplay=False)
-@app.route("/song/like")
-def like_song():
-    print('INSIDE!!!!!!!!!!!!!!!!!!!!!! LIKE song')
-    generateRecommendations.like_song(get_spotify(), shouldUpdateDisplay=False)
-@app.route("/song/dislike")
-def dislike_song():
-    print('INSIDE!!!!!!!!!!!!!!!!!!!!!! disLIKE song')
-    generateRecommendations.dislike_song(get_spotify(), shouldUpdateDisplay=False)
-
-@app.route("/artist/dislike")
-def dislike_artist():
-    print('INSIDE!!!!!!!!!!!!!!!!!!!!!! DISLIKE ARTIST')
-    generateRecommendations.dislike_artist(get_spotify(), shouldUpdateDisplay=False)
 
 def get_spotify():
     client_id='efcbfcfbfa624a9498f42a2a28475264'
