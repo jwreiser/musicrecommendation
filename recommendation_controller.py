@@ -71,7 +71,7 @@ def play():
 @app.route("/player/next")
 def skip():
     print('INSIDE!!!!!!!!!!!!!!!!!!!!!! next')
-    return generateRecommendations.skip_song(get_spotify())
+    return generateRecommendations.skip_song(get_spotify(), shouldUpdateDisplay=False)
 ######################              BASIS        ###################################
 @app.route("/basis/artists")
 def basis_artists():
