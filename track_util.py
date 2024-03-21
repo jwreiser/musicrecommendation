@@ -120,9 +120,10 @@ def get_songs_by_audio_attributes(sp, playlist_id):
             'summer','trance','trip-hop','work-out','world-music']
     genre=random.choice(genres)
     songs=[]
-    recommendations = sp.recommendations(limit=100,seed_genres=[genre],min_acousticness=attributes['acousticness']-.075,max_acousticness=attributes['acousticness']+.075
-                                         ,min_danceability=attributes['danceability']-.075,max_danceability=attributes['danceability']+.075
-                                         ,min_energy=attributes['energy']-.075,max_energy=attributes['energy']+.075
+    variance=.1
+    recommendations = sp.recommendations(limit=100,seed_genres=[genre],min_acousticness=attributes['acousticness']-variance,max_acousticness=attributes['acousticness']+variance
+                                         ,min_danceability=attributes['danceability']-variance,max_danceability=attributes['danceability']+variance
+                                         ,min_energy=attributes['energy']-variance,max_energy=attributes['energy']+variance
                                          # , target_key=attributes['key'] causes ambiguous error
                                          # , target_tempo=attributes['tempo'] causes ambiguous error
                                          # , target_valence=attributes['valence'] causes ambiguous error
