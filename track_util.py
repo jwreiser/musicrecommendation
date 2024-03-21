@@ -115,12 +115,13 @@ def get_songs_by_audio_attributes(sp, playlist_id):
     attributes=attributes_df.sample()
     genres=['acoustic','afrobeat','alternative','alt-rock','ambient','bluegrass','blues','bossanova','brazil','breakbeat',
             'british','chill','dancehall','dub','electro','electronic','funk','groove','grunge','guitar','happy','hard-rock',
-            'hip-hop','idm','indian','indie','latin','latino','mpb','pagode','party','psych-rock',
+            'hip-hop','idm','indie','latin','latino','pagode','party','psych-rock',
             'r-n-b','reggae','rock','rock-n-roll','rockabilly','samba','singer-songwriter','ska','songwriter','soul','study',
             'summer','trance','trip-hop','work-out','world-music']
     genre=random.choice(genres)
     songs=[]
-    variance=.25
+    #.25 too many hits
+    variance=.2
     recommendations = sp.recommendations(limit=100,seed_genres=[genre],min_acousticness=attributes['acousticness']-variance,max_acousticness=attributes['acousticness']+variance
                                          ,min_danceability=attributes['danceability']-variance,max_danceability=attributes['danceability']+variance
                                          ,min_energy=attributes['energy']-variance,max_energy=attributes['energy']+variance
