@@ -142,7 +142,7 @@ def load_audio_features(sp,shouldUpdateDisplay=True):
     if shouldUpdateDisplay:
         updateDisplay(sp,genre)
     else:
-        return getDisplay(sp,genre)
+        return getDisplay(sp,genre,len(songs))
 
 def add_artist_songs(sp,shouldUpdateDisplay=True):
     result = sp.currently_playing()
@@ -371,7 +371,7 @@ def updateDisplay(sp,genre=None):
             display+=": "+genre
         # displayVar.set(display)
 
-def getDisplay(sp,genre=None):
+def getDisplay(sp,genre=None,numSongs=None):
     time.sleep(3)
     result = sp.currently_playing()
     display={}
@@ -385,6 +385,8 @@ def getDisplay(sp,genre=None):
         }
         if genre is not None:
             display['genre']=genre
+        if numSongs is not None:
+            display['numSongs'] = numSongs
 
     return json.dumps(display)
 
