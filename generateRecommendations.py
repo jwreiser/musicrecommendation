@@ -142,7 +142,7 @@ def load_audio_features(sp,shouldUpdateDisplay=True):
     if shouldUpdateDisplay:
         updateDisplay(sp,genre)
     else:
-        return getDisplay(sp)
+        return getDisplay(sp,genre)
 
 def add_artist_songs(sp,shouldUpdateDisplay=True):
     result = sp.currently_playing()
@@ -371,7 +371,7 @@ def updateDisplay(sp,genre=None):
             display+=": "+genre
         # displayVar.set(display)
 
-def getDisplay(sp):
+def getDisplay(sp,genre=None):
     time.sleep(3)
     result = sp.currently_playing()
     display={}
@@ -383,6 +383,8 @@ def getDisplay(sp):
             'track':track['name'],
             'cover': track['album']['images'][0]['url']
         }
+        if genre is not None:
+            display['genre']:genre
 
     return json.dumps(display)
 
