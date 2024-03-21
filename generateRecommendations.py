@@ -384,7 +384,7 @@ def getDisplay(sp,genre=None):
             'cover': track['album']['images'][0]['url']
         }
         if genre is not None:
-            display['genre']:genre
+            display['genre']=genre
 
     return json.dumps(display)
 
