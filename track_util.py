@@ -277,7 +277,7 @@ def playlist_to_tracks(sp,playlist_df,pid,artists_df):
 def get_songs_similar_to_artist(sp, artist_id, filter_out_liked, num_songs=10):
     if filter_out_liked:
         songs_df = build_songs_df(result=None, temporary=False)
-        artists_df = get_artists(include_disliked=True)
+        artists_df = get_artists(sp,include_disliked=True)
     else:
         artists_df = get_artists(sp,include_disliked=True,include_liked=False)
     recommended_artists = sp.artist_related_artists(artist_id)['artists']
