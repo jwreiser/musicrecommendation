@@ -277,9 +277,10 @@ def playlist_to_tracks(sp,playlist_df,pid,artists_df):
 def get_songs_similar_to_artist(sp, artist_id, filter_out_liked, num_songs=10):
     if filter_out_liked:
         songs_df = build_songs_df(result=None, temporary=False)
-        artists_df = get_artists(sp,include_disliked=True)
+        artists_df = get_artists(sp,include_liked=True,include_disliked=True)
     else:
         artists_df = get_artists(sp,include_disliked=True,include_liked=False)
+
     recommended_artists = sp.artist_related_artists(artist_id)['artists']
     songs=[]
     for artist in recommended_artists:
@@ -291,7 +292,7 @@ def get_songs_similar_to_artist(sp, artist_id, filter_out_liked, num_songs=10):
     try:
         recommendations = sp.recommendations(seed_artists=[artist_id], limit=num_songs)
         for track in recommendations['tracks']:
-            if not filter_out_liked or track['uri'] not in list(songs_df):
+            if track['artists'][0]['name'] not in list(artists_df) and (not filter_out_liked or track['uri'] not in list(songs_df)):
                 songs.append(track['uri'])
     except Exception as err:
         print(Exception, err)
